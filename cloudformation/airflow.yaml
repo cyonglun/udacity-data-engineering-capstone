@@ -81,10 +81,6 @@ Resources:
          yum install -y aws-cfn-bootstrap
          # Start cfn-init
          /opt/aws/bin/cfn-init -v -c install --stack ${AWS::StackId} --resource EC2Instance --region ${AWS::Region}
-         # Download and unzip the Movielens dataset
-         #wget http://files.grouplens.org/datasets/movielens/ml-latest.zip && unzip ml-latest.zip
-         # Upload the movielens dataset files to the S3 bucket
-         #aws s3 cp ml-latest s3://${S3BucketName} --recursive
          # Install git
          sudo yum install -y git
          # Clone the git repository
