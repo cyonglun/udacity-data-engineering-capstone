@@ -1,5 +1,4 @@
-import airflowlib.emr_lib as emr
-import os
+import dags.airflowlib.emr_lib as emr
 
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
