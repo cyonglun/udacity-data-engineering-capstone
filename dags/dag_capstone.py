@@ -3,6 +3,7 @@ import os
 sys.path.insert(0,os.path.abspath(os.path.dirname(__file__)))
 
 import airflowlib.emr_lib as emr
+import logging
 
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
@@ -33,7 +34,9 @@ emr.client(region_name=region)
 
 # Creates an EMR cluster
 def create_emr(**kwargs):
+    logging.info("Creating EMR Cluster...")
     cluster_id = emr.create_cluster(region_name=region, cluster_name='udacity_capstone_cluster', num_core_nodes=2)
+    logging.info(f"Created EMR Cluster with Cluster Id: {cluster_id}")
     return cluster_id
 
 
@@ -46,13 +49,16 @@ def wait_for_completion(**kwargs):
 
 # Terminates the EMR cluster
 def terminate_emr(**kwargs):
+    logging.info("Terminating EMR Cluster...")
     ti = kwargs['ti']
     cluster_id = ti.xcom_pull(task_ids='create_cluster')
     emr.terminate_cluster(cluster_id)
+    logging.info(f"Terminated EMR Cluster with Cluster Id: {cluster_id}")
 
 
 # Converts each of the datafile to parquet
 def submit_script_to_emr(**kwargs):
+    logging.info("Submitting Script to EMR Cluster")
     # Construct month_year arg
     execution_date = kwargs['execution_date']
     year_str = str(execution_date.year)

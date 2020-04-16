@@ -16,7 +16,7 @@ def sas_to_datetime(x):
 udf_sas_to_datetime = udf(lambda x: sas_to_datetime(x), DateType())
 
 #Parse Data Labels
-with open('{}/raw/I94_SAS_Labels_Descriptions.SAS'.format(s3_bucket_name)) as header_file:
+with open('../labels/I94_SAS_Labels_Descriptions.SAS') as header_file:
     lines = header_file.readlines()
 
     # valid_city: Line 10 to 298
