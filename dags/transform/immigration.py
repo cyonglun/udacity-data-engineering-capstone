@@ -5,7 +5,7 @@ from pyspark.sql.functions import udf, col
 from pyspark.sql.types import *
 from datetime import datetime, timedelta
 
-s3_bucket_name = 's3:yonglun-udacity-capstone'
+s3_bucket_name = 's3://yonglun-udacity-capstone'
 
 def sas_to_datetime(x):
     try:

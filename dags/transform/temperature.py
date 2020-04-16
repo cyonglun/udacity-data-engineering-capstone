@@ -4,7 +4,7 @@ from pyspark.sql.functions import udf, year, month
 from pyspark.sql.types import *
 from datetime import datetime
 
-s3_bucket_name = 's3:yonglun-udacity-capstone'
+s3_bucket_name = 's3://yonglun-udacity-capstone'
 
 def parse_datetime(x):
     try:
