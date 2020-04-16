@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.insert(0,os.path.abspath(os.path.dirname(__file__)))
 
-from airflowlib.emr_lib import *
+import airflowlib.emr_lib as emr
 
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
@@ -27,13 +27,13 @@ dag = DAG('udacity_capstone_dag',
           default_args=default_args,
           description='Load and Transform data in EMR with Airflow'
           )
-region = get_region()
-client(region_name=region)
+region = emr.get_region()
+emr.client(region_name=region)
 
 
 # Creates an EMR cluster
 def create_emr(**kwargs):
-    cluster_id = create_cluster(region_name=region, cluster_name='udacity_capstone_cluster', num_core_nodes=2)
+    cluster_id = emr.create_cluster(region_name=region, cluster_name='udacity_capstone_cluster', num_core_nodes=2)
     return cluster_id
 
 
@@ -41,14 +41,14 @@ def create_emr(**kwargs):
 def wait_for_completion(**kwargs):
     ti = kwargs['ti']
     cluster_id = ti.xcom_pull(task_ids='create_cluster')
-    wait_for_cluster_creation(cluster_id)
+    emr.wait_for_cluster_creation(cluster_id)
 
 
 # Terminates the EMR cluster
 def terminate_emr(**kwargs):
     ti = kwargs['ti']
     cluster_id = ti.xcom_pull(task_ids='create_cluster')
-    terminate_cluster(cluster_id)
+    emr.terminate_cluster(cluster_id)
 
 
 # Converts each of the datafile to parquet
@@ -63,12 +63,12 @@ def submit_script_to_emr(**kwargs):
 
     ti = kwargs['ti']
     cluster_id = ti.xcom_pull(task_ids='create_cluster')
-    cluster_dns = get_cluster_dns(cluster_id)
-    headers = create_spark_session(cluster_dns, 'pyspark')
-    session_url = wait_for_idle_session(cluster_dns, headers)
-    statement_response = submit_statement(session_url, file, script_args)
-    track_statement_progress(cluster_dns, statement_response.headers)
-    kill_spark_session(session_url)
+    cluster_dns = emr.get_cluster_dns(cluster_id)
+    headers = emr.create_spark_session(cluster_dns, 'pyspark')
+    session_url = emr.wait_for_idle_session(cluster_dns, headers)
+    statement_response = emr.submit_statement(session_url, file, script_args)
+    emr.track_statement_progress(cluster_dns, statement_response.headers)
+    emr.kill_spark_session(session_url)
 
 
 # Define the individual tasks using Python Operators
