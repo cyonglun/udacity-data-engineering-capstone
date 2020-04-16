@@ -5,6 +5,8 @@ from pyspark.sql.functions import udf, col
 from pyspark.sql.types import *
 from datetime import datetime, timedelta
 
+s3_bucket_name = 's3:yonglun-udacity-capstone'
+
 def sas_to_datetime(x):
     try:
         base_date = datetime(1960, 1, 1)
@@ -12,8 +14,6 @@ def sas_to_datetime(x):
     except:
         return None
 udf_sas_to_datetime = udf(lambda x: sas_to_datetime(x), DateType())
-
-s3_bucket_name = 's3:yonglun-udacity-capstone'
 
 #Parse Data Labels
 with open('{}/raw/I94_SAS_Labels_Descriptions.SAS'.format(s3_bucket_name)) as header_file:
