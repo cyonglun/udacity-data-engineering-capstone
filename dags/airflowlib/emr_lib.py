@@ -73,6 +73,7 @@ def terminate_cluster(cluster_id):
 # Creates an interactive scala spark session.
 # Python(kind=pyspark), R(kind=sparkr) and SQL(kind=sql) spark sessions can also be created by changing the value of kind.
 def create_spark_session(master_dns, kind='spark'):
+    logging.info("Creating Spark Sessions...")
     # 8998 is the port on which the Livy server runs
     host = 'http://' + master_dns + ':8998'
     data = {
@@ -86,6 +87,7 @@ def create_spark_session(master_dns, kind='spark'):
 
 
 def wait_for_idle_session(master_dns, response_headers):
+    logging.info("Waiting for idle session...")
     # wait for the session to be idle or ready for job submission
     status = ''
     host = 'http://' + master_dns + ':8998'
@@ -99,6 +101,7 @@ def wait_for_idle_session(master_dns, response_headers):
 
 
 def kill_spark_session(session_url):
+    logging.info("Killing Spark Sessions...")
     requests.delete(session_url, headers={'Content-Type': 'application/json'})
 
 # Submits the scala code as a simple JSON command to the Livy server

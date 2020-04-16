@@ -36,7 +36,7 @@ emr.client(region_name=region)
 def create_emr(**kwargs):
     logging.info("Creating EMR Cluster...")
     cluster_id = emr.create_cluster(region_name=region, cluster_name='udacity_capstone_cluster', num_core_nodes=2)
-    logging.info(f"Created EMR Cluster with Cluster Id: {cluster_id}")
+    logging.info('Created EMR Cluster with Cluster Id: {}'.format(cluster_id))
     return cluster_id
 
 
@@ -53,7 +53,7 @@ def terminate_emr(**kwargs):
     ti = kwargs['ti']
     cluster_id = ti.xcom_pull(task_ids='create_cluster')
     emr.terminate_cluster(cluster_id)
-    logging.info(f"Terminated EMR Cluster with Cluster Id: {cluster_id}")
+    logging.info('Terminated EMR Cluster with Cluster Id: {}'.format(cluster_id))
 
 
 # Converts each of the datafile to parquet
