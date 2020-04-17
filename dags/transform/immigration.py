@@ -46,14 +46,17 @@ with open('../labels/I94_SAS_Labels_Descriptions.SAS') as header_file:
 filepath = '{}/raw/i94_immigration_data/i94_{}_sub.sas7bdat'.format(s3_bucket_name, month_year)
 
 # Load
+logging.info("Loading Immigration Data...")
 raw_immigration_df = spark.read.format('com.github.saurfang.sas.spark').load(filepath)
 
 # Clean
+logging.info("Cleaning Immigration Data...")
 cleaned_immigration_df = raw_immigration_df\
     .filter(raw_immigration_df.i94addr.isNotNull() and raw_immigration_df.i94addr.isin(list(valid_addr.keys())))\
     .filter(raw_immigration_df.i94cit.isin(list(valid_city.keys()))) \
 
 # Transform
+logging.info("Transforming Immigration Data...")
 transformed_immigration_df = cleaned_immigration_df\
     .selectExpr(
         "cast(cicid as int) id",
@@ -73,6 +76,7 @@ transformed_immigration_df = cleaned_immigration_df\
     .withColumn("departure_date", udf_sas_to_datetime("depdate"))
 
 # Write
+logging.info("Writing Immigration Data...")
 transformed_immigration_df.write\
     .partitionBy("year", "month")\
     .mode("append")\
