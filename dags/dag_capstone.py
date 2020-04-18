@@ -23,7 +23,7 @@ default_args = {
 # Initialize the DAG
 # Concurrency --> Number of tasks allowed to run concurrently
 dag = DAG('udacity_capstone_dag',
-          concurrency=3,
+          concurrency=1,
           schedule_interval=None,
           default_args=default_args,
           description='Load and Transform data in EMR with Airflow'
