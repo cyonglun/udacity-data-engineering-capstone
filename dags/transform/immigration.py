@@ -1,11 +1,16 @@
 import re
+import boto3
 
 from pyspark.sql.types import *
 from pyspark.sql.functions import udf, col
 from pyspark.sql.types import *
 from datetime import datetime, timedelta
 
+bucket_name = 'yonglun-udacity-capstone'
 s3_bucket_name = 's3://yonglun-udacity-capstone'
+
+sas_description_filekey = 'raw/I94_SAS_Labels_Descriptions.SAS'
+sas_description_filename = '/tmp/I94_SAS_Labels_Descriptions.SAS'
 
 def sas_to_datetime(x):
     try:
@@ -16,7 +21,17 @@ def sas_to_datetime(x):
 udf_sas_to_datetime = udf(lambda x: sas_to_datetime(x), DateType())
 
 #Parse Data Labels
-with open('labels/I94_SAS_Labels_Descriptions.SAS') as header_file:
+# S3 client
+s3 = boto3.resource('s3',
+                    region_name="us-west-2",
+                    aws_access_key_id=access_key,
+                    aws_secret_access_key=secret_key,
+                    )
+
+# Get Label Descriptions File
+s3.Bucket(bucket_name).download_file(sas_description_filekey, sas_description_filename)
+
+with open(sas_description_filename) as header_file:
     lines = header_file.readlines()
 
     # valid_city: Line 10 to 298
@@ -46,17 +61,14 @@ with open('labels/I94_SAS_Labels_Descriptions.SAS') as header_file:
 filepath = '{}/raw/i94_immigration_data/i94_{}_sub.sas7bdat'.format(s3_bucket_name, month_year)
 
 # Load
-logging.info("Loading Immigration Data...")
 raw_immigration_df = spark.read.format('com.github.saurfang.sas.spark').load(filepath)
 
 # Clean
-logging.info("Cleaning Immigration Data...")
 cleaned_immigration_df = raw_immigration_df\
     .filter(raw_immigration_df.i94addr.isNotNull() and raw_immigration_df.i94addr.isin(list(valid_addr.keys())))\
     .filter(raw_immigration_df.i94cit.isin(list(valid_city.keys()))) \
 
 # Transform
-logging.info("Transforming Immigration Data...")
 transformed_immigration_df = cleaned_immigration_df\
     .selectExpr(
         "cast(cicid as int) id",
@@ -76,7 +88,6 @@ transformed_immigration_df = cleaned_immigration_df\
     .withColumn("departure_date", udf_sas_to_datetime("depdate"))
 
 # Write
-logging.info("Writing Immigration Data...")
 transformed_immigration_df.write\
     .partitionBy("year", "month")\
     .mode("append")\

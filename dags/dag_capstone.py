@@ -9,16 +9,23 @@ from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from datetime import datetime, timedelta
 
+from airflow.contrib.hooks.aws_hook import AwsHook
+
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
     'start_date': datetime(2016, 1, 1),
+    'end_date': datetime(2016, 12, 1),
     'retries': 0,
     'retry_delay': timedelta(minutes=2),
     'email_on_failure': False,
     'email_on_retry': False,
     'provide_context': True
 }
+
+# Get AWS Credentials from Hook
+aws_hook = AwsHook("aws_credentials")
+aws_credentials = aws_hook.get_credentials()
 
 # Initialize the DAG
 # Concurrency --> Number of tasks allowed to run concurrently
@@ -31,10 +38,10 @@ dag = DAG('udacity_capstone_dag',
 region = emr.get_region()
 emr.client(region_name=region)
 
-
 # Creates an EMR cluster
 def create_emr(**kwargs):
     logging.info("Creating EMR Cluster...")
+    logging.info("Access Key: " + aws_credentials.access_key + ", Secret Key: " + aws_credentials.secret_key)
     cluster_id = emr.create_cluster(region_name=region, cluster_name='udacity_capstone_cluster', num_core_nodes=2)
     logging.info('Created EMR Cluster with Cluster Id: {}'.format(cluster_id))
     return cluster_id
@@ -61,7 +68,7 @@ def submit_script_to_emr(**kwargs):
     logging.info("Submitting Script to EMR Cluster")
     # Construct month_year arg
     execution_date = kwargs['execution_date']
-    year_str = str(execution_date.year)
+    year_str = execution_date.strftime("%y")
     month_str = execution_date.strftime("%b")
     script_args = "month_year = '{}'\n".format(month_str + year_str)
 
@@ -95,12 +102,12 @@ transform_immigration = PythonOperator(
     params={"file": '/root/airflow/dags/transform/immigration.py'}
 )
 
-transform_temperature = PythonOperator(
-    task_id='transform_temperature',
-    python_callable=submit_script_to_emr,
-    dag=dag,
-    params={"file": '/root/airflow/dags/transform/temperature.py'}
-)
+# transform_temperature = PythonOperator(
+#     task_id='transform_temperature',
+#     python_callable=submit_script_to_emr,
+#     dag=dag,
+#     params={"file": '/root/airflow/dags/transform/temperature.py'}
+# )
 
 terminate_cluster = PythonOperator(
     task_id='terminate_cluster',
@@ -111,4 +118,4 @@ terminate_cluster = PythonOperator(
 # construct the DAG by setting the dependencies
 create_cluster >> wait_for_cluster_completion
 wait_for_cluster_completion >> transform_immigration >> terminate_cluster
-wait_for_cluster_completion >> transform_temperature >> terminate_cluster
+#wait_for_cluster_completion >> transform_temperature >> terminate_cluster
