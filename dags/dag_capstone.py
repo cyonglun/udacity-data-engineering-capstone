@@ -15,6 +15,7 @@ default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
     'start_date': datetime(2016, 1, 1),
+    'end_date': datetime(2016, 12, 1),
     'retries': 0,
     'retry_delay': timedelta(minutes=2),
     'email_on_failure': False,
@@ -30,7 +31,7 @@ aws_credentials = aws_hook.get_credentials()
 # Concurrency --> Number of tasks allowed to run concurrently
 dag = DAG('udacity_capstone_dag',
           concurrency=1,
-          schedule_interval=None,
+          schedule_interval='@monthly',
           default_args=default_args,
           description='Load and Transform data in EMR with Airflow'
           )
@@ -68,8 +69,9 @@ def submit_script_to_emr(**kwargs):
     # Construct month_year arg
     execution_date = kwargs['execution_date']
     year_str = execution_date.strftime("%y")
-    month_str = execution_date.strftime("%b")
-    script_args = "month_year = '{}'\n".format(month_str + year_str)
+    month_str = execution_date.strftime("%b").lower()
+    script_args = "month_year = '{}'\naccess_key = '{}'\nsecret_key = '{}'\n" \
+        .format(month_str + year_str, aws_credentials.access_key, aws_credentials.secret_key)
 
     file = kwargs['params']['file']
 
@@ -108,6 +110,13 @@ transform_immigration = PythonOperator(
 #     params={"file": '/root/airflow/dags/transform/temperature.py'}
 # )
 
+quality_check = PythonOperator(
+    task_id="quality_check",
+    python_callable = submit_script_to_emr,
+    params = {"file": '/root/airflow/dags/transform/quality_check.py'},
+    dag=dag
+)
+
 terminate_cluster = PythonOperator(
     task_id='terminate_cluster',
     python_callable=terminate_emr,
@@ -116,5 +125,5 @@ terminate_cluster = PythonOperator(
 
 # construct the DAG by setting the dependencies
 create_cluster >> wait_for_cluster_completion
-wait_for_cluster_completion >> transform_immigration >> terminate_cluster
-#wait_for_cluster_completion >> transform_temperature >> terminate_cluster
+wait_for_cluster_completion >> transform_immigration >> quality_check >> terminate_cluster
+#wait_for_cluster_completion >> transform_temperature >> quality_check >> terminate_cluster
