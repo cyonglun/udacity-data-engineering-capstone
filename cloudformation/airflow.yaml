@@ -92,7 +92,7 @@ Resources:
          # Encrypt connection passwords in metadata db
          sudo pip install apache-airflow[crypto]
          # Postgres operators and hook, support as an Airflow backend
-         sudo pip install apache-airflow[postgres]==1.10.10
+         sudo pip install apache-airflow[postgres]
          sudo -H pip install six==1.10.0
          sudo pip install --upgrade six
          sudo pip install markupsafe
@@ -101,6 +101,9 @@ Resources:
          sudo pip install werkzeug==0.16.0
          echo 'export PATH=/usr/local/bin:$PATH' >> /root/.bash_profile
          source /root/.bash_profile
+         # Install Python 3
+         #yum install -y python36 python36-pip
+         #alternatives --set python /usr/bin/python3.6
          # Initialize Airflow
          airflow initdb
          # Update the RDS connection in the Airflow Config file

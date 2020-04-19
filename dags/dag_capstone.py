@@ -15,7 +15,6 @@ default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
     'start_date': datetime(2016, 1, 1),
-    'end_date': datetime(2016, 12, 1),
     'retries': 0,
     'retry_delay': timedelta(minutes=2),
     'email_on_failure': False,
