@@ -92,7 +92,7 @@ Resources:
          # Encrypt connection passwords in metadata db
          sudo pip install apache-airflow[crypto]
          # Postgres operators and hook, support as an Airflow backend
-         sudo pip install apache-airflow[postgres]
+         sudo pip install apache-airflow[postgres]==1.10.10
          sudo -H pip install six==1.10.0
          sudo pip install --upgrade six
          sudo pip install markupsafe
