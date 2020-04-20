@@ -30,7 +30,7 @@ aws_credentials = aws_hook.get_credentials()
 # Initialize the DAG
 # Concurrency --> Number of tasks allowed to run concurrently
 dag = DAG('udacity_capstone_dag',
-          concurrency=1,
+          concurrency=3,
           schedule_interval='@monthly',
           default_args=default_args,
           description='Load and Transform data in EMR with Airflow'
