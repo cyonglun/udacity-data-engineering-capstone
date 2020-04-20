@@ -65,7 +65,7 @@ raw_immigration_df = spark.read.format('com.github.saurfang.sas.spark').load(fil
 
 # Clean
 cleaned_immigration_df = raw_immigration_df\
-    .filter(raw_immigration_df.i94addr.isNotNull() and raw_immigration_df.i94addr.isin(list(valid_addr.keys())))\
+    .filter(raw_immigration_df.i94addr.isNotNull() & raw_immigration_df.i94addr.isin(list(valid_addr.keys())))\
     .filter(raw_immigration_df.i94cit.isin(list(valid_city.keys()))) \
 
 # Transform
@@ -74,11 +74,11 @@ transformed_immigration_df = cleaned_immigration_df\
         "cast(cicid as int) id",
         "cast(i94yr as int) year",
         "cast(i94mon as int) month",
-        "i94cit as country_code",
+        "cast(i94res as int) AS from_country_code",
         "i94port as port_code",
         "i94addr as state_code",
         "i94mode as arrival_mode",
-        "i94bir as age",
+        "cast(i94bir as int) AS age",
         "gender",
         "cast(admnum as long) AS admission_no",
         "visatype",

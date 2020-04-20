@@ -30,7 +30,7 @@ aws_credentials = aws_hook.get_credentials()
 # Initialize the DAG
 # Concurrency --> Number of tasks allowed to run concurrently
 dag = DAG('udacity_capstone_dag',
-          concurrency=3,
+          concurrency=20,
           schedule_interval='@monthly',
           default_args=default_args,
           description='Load and Transform data in EMR with Airflow'
@@ -103,12 +103,12 @@ transform_immigration = PythonOperator(
     params={"file": '/root/airflow/dags/transform/immigration.py'}
 )
 
-# transform_temperature = PythonOperator(
-#     task_id='transform_temperature',
-#     python_callable=submit_script_to_emr,
-#     dag=dag,
-#     params={"file": '/root/airflow/dags/transform/temperature.py'}
-# )
+transform_temperature = PythonOperator(
+    task_id='transform_temperature',
+    python_callable=submit_script_to_emr,
+    dag=dag,
+    params={"file": '/root/airflow/dags/transform/temperature.py'}
+)
 
 quality_check = PythonOperator(
     task_id="quality_check",
@@ -125,5 +125,8 @@ terminate_cluster = PythonOperator(
 
 # construct the DAG by setting the dependencies
 create_cluster >> wait_for_cluster_completion
-wait_for_cluster_completion >> transform_immigration >> quality_check >> terminate_cluster
-#wait_for_cluster_completion >> transform_temperature >> quality_check >> terminate_cluster
+
+wait_for_cluster_completion >> transform_immigration >> quality_check
+wait_for_cluster_completion >> transform_temperature >> quality_check
+
+quality_check >> terminate_cluster
