@@ -1,4 +1,4 @@
-# Udacity Nanodegree Data Engineering Capstone
+# Udacity Data Engineering Nanodegree Capstone
 
 ## Introduction
 The US immigrations department is dealing with large amounts of immigration data on a daily basis, and want to move their data warehouse to a data lake. Their data comes from various government agencies and currently resides on S3. The officers have decided that it is time to introduce more automation and monitoring to their data warehouse ETL pipelines and come to the conclusion that the best tool to achieve this is Apache Airflow.
