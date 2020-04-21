@@ -65,8 +65,10 @@ raw_immigration_df = spark.read.format('com.github.saurfang.sas.spark').load(fil
 
 # Clean
 cleaned_immigration_df = raw_immigration_df\
+    .filter(raw_immigration_df.i94port.isin(list(valid_port.keys()))) \
     .filter(raw_immigration_df.i94addr.isNotNull() & raw_immigration_df.i94addr.isin(list(valid_addr.keys())))\
     .filter(raw_immigration_df.i94cit.isin(list(valid_city.keys()))) \
+    .filter(raw_immigration_df.i94mode != 'NaN') \
 
 # Transform
 transformed_immigration_df = cleaned_immigration_df\
@@ -74,7 +76,7 @@ transformed_immigration_df = cleaned_immigration_df\
         "cast(cicid as int) id",
         "cast(i94yr as int) year",
         "cast(i94mon as int) month",
-        "cast(i94res as int) AS from_country_code",
+        "cast(i94cit as int) AS city_code",
         "i94port as port_code",
         "i94addr as state_code",
         "i94mode as arrival_mode",
@@ -89,6 +91,6 @@ transformed_immigration_df = cleaned_immigration_df\
 
 # Write
 transformed_immigration_df.write\
-    .partitionBy("year", "month")\
+    .partitionBy("city_code", "year", "month")\
     .mode("append")\
     .parquet("{}/transformed/immigration/".format(s3_bucket_name))
