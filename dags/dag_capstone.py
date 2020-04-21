@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.insert(0,os.path.abspath(os.path.dirname(__file__)))
 
-import airflowlib.emr_lib as emr
+import airflowlib as emr
 import logging
 
 from airflow import DAG
