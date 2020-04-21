@@ -39,7 +39,7 @@ _temperature_ table will contain the normalized World Temperature Data:
 - year: 4 digit year
 
 ## AWS Infrastructure
-Cloudformation is utilized to setup the required infrastructure according a [tutorial](https://aws.amazon.com/blogs/big-data/build-a-concurrent-data-orchestration-pipeline-using-amazon-emr-and-apache-livy/).
+Cloudformation is utilized to setup the required infrastructure according to a [tutorial](https://aws.amazon.com/blogs/big-data/build-a-concurrent-data-orchestration-pipeline-using-amazon-emr-and-apache-livy/).
 ![Cloudformation Design](images/cloudformation.png)
 
 Infrastructure Breakdown:
