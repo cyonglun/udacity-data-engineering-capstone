@@ -1,7 +1,7 @@
 # Udacity Nanodegree Data Engineering Capstone
 
 ## Introduction
-The US immigrations department is dealing with large amounts of immigration data on a daily basis, and want to move their data warehouse to a data lake. Their data comes various governmental agencies and currently resides on S3. The officers have decided that it is time to introduce more automation and monitoring to their data warehouse ETL pipelines and come to the conclusion that the best tool to achieve this is Apache Airflow.
+The US immigrations department is dealing with large amounts of immigration data on a daily basis, and want to move their data warehouse to a data lake. Their data comes from various government agencies and currently resides on S3. The officers have decided that it is time to introduce more automation and monitoring to their data warehouse ETL pipelines and come to the conclusion that the best tool to achieve this is Apache Airflow.
 
 ## Goal
 The management wants to create a high grade data pipelines that is dynamic and built from reusable tasks, can be monitored, and allow easy backfills. They have also noted that the data quality plays a big part when analyses are executed on top the data warehouse and want to run tests against their datasets after the ETL steps have been executed to catch any discrepancies in the datasets. The project aims to build an ETL pipeline that extracts their data from S3, processes them using Spark, and loads the data back into S3 as a set of dimensional tables. This will allow their analytics team to continue finding insights in the immigration and temperature data.
