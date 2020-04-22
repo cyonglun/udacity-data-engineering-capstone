@@ -43,7 +43,7 @@ Cloudformation is utilized to setup the required infrastructure according to a [
 ![Cloudformation Design](images/cloudformation.png)
 
 Infrastructure Breakdown:
-- S3 Bucket: Stores raw and tranformed dataset files
+- S3 Bucket: Stores raw and transformed dataset files
 - EC2: Running Apache Airflow. DAGS are triggered from web interface
 - RDS: Stores database for running Apache Airflow
 - EMR: Spark cluster for data transformation
