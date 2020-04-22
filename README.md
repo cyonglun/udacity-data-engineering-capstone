@@ -87,7 +87,7 @@ The DAG is configured to trigger on a monthly interval to process Immigration an
     - Add more EMR clusters to handle the larger volume of data
     - Use a MPP Database such as Amazon Redshift for data warehousing
 - The data populates a dashboard that must be updated on a daily basis by 7am every day.
-    - DAG is configurable to run on daily intervals as fixed timings
+    - DAG is configurable to run on daily intervals at fixed timings
     - Enable run retries and notification via email
 - The database needed to be accessed by 100+ people.
     - Redshift is cloud-based and hosted directly on AWS. It can be scaled up/down easily by adding/removing nodes. Security configurations can also be added to restrict access
