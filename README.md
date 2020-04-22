@@ -47,6 +47,7 @@ Infrastructure Breakdown:
 - EC2: Running Apache Airflow. DAGS are triggered from web interface
 - RDS: Stores database for running Apache Airflow
 - EMR: Spark cluster for data transformation
+
 And the various security groups and roles to run the infrastructure
 
 ## ETL
